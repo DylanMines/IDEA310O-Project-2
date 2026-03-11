@@ -7,23 +7,37 @@ public class PlayerMove : MonoBehaviour
     public int speed;
     public int sensitivity;
 
+    [SerializeField]
+    private ParticleSystem effects;
+
     private Vector3 momentum;
 
-    private PlayerInput _input;
+    private InputAction lookAction;
+    InputAction moveAction;
     void Start()
     {
-        _input = GetComponent<PlayerInput>();
+        
         Cursor.lockState = CursorLockMode.Locked;
+        moveAction = InputSystem.actions.FindAction("Move");
+        lookAction = InputSystem.actions.FindAction("Look");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_input.moving == true)
+        var emission = effects.emission;
+
+        if (moveAction.IsPressed() == true)
         {
-            Debug.Log("moving");
+            emission.rateOverTime = 30f;
+            //Debug.Log("moving");
             Vector3 moveDirection = transform.forward * -(speed / 50);
             momentum += moveDirection * Time.deltaTime;
+        }
+        else
+        {
+            emission.rateOverTime = 0f;
+            // effects.Pause();
         }
 
         transform.position += momentum * Time.deltaTime;
@@ -36,7 +50,8 @@ public class PlayerMove : MonoBehaviour
 
     private void CameraRotation()
     {
-        Vector3 rotateVector = new Vector3(-_input.look.y, _input.look.x, 0);
+        Vector2 lookValue = lookAction.ReadValue<Vector2>();
+        Vector3 rotateVector = new Vector3(-lookValue.y, lookValue.x, 0);
         transform.Rotate(rotateVector * Time.deltaTime * sensitivity);
             
     }

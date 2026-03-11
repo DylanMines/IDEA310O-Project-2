@@ -7,7 +7,7 @@
             "id": "6c20b5b4-37de-45df-9df2-abe9230004f3",
             "actions": [
                 {
-                    "name": "look",
+                    "name": "Look",
                     "type": "Value",
                     "id": "a1d106ee-8632-4da0-a7fd-ffd44f6a9a59",
                     "expectedControlType": "Vector2",
@@ -16,7 +16,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "roll",
+                    "name": "Roll",
                     "type": "PassThrough",
                     "id": "96016a2f-9e4a-4b92-b839-e6c2794339f3",
                     "expectedControlType": "Button",
@@ -25,7 +25,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "move",
+                    "name": "Move",
                     "type": "Button",
                     "id": "5a34ea32-6927-4781-aaec-3ec117894f4f",
                     "expectedControlType": "",
@@ -42,7 +42,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "look",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -53,7 +53,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "roll",
+                    "action": "Roll",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -64,7 +64,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "roll",
+                    "action": "Roll",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -75,7 +75,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "move",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

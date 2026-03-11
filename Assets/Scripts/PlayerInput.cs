@@ -13,6 +13,7 @@ public class PlayerInput : MonoBehaviour
     }
     public void OnMove(InputValue value)
     {
+        Debug.Log(value);
         moving = value.isPressed;
     }
 }
