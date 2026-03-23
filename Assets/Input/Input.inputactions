@@ -16,18 +16,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Roll",
-                    "type": "PassThrough",
-                    "id": "96016a2f-9e4a-4b92-b839-e6c2794339f3",
-                    "expectedControlType": "Button",
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "5a34ea32-6927-4781-aaec-3ec117894f4f",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Move",
+                    "name": "RollLeft",
                     "type": "Button",
-                    "id": "5a34ea32-6927-4781-aaec-3ec117894f4f",
+                    "id": "93d7b5df-b409-42bb-b132-4e03ff4284be",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RollRight",
+                    "type": "Button",
+                    "id": "f0a8f2b6-5cbd-41b4-a36b-cbf173a2c9ee",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -48,34 +57,34 @@
                 },
                 {
                     "name": "",
-                    "id": "342d52e3-cf75-4587-9d1e-e9ba4481c0cf",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "87318e37-67f4-45b7-9eca-45c8eb4ef7e5",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "70f9ef7e-5b9b-4d5e-a528-e8fe3c70aa93",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "07429831-8e26-4b01-8f39-5b37b3c3e5bb",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RollLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fe0d73ff-adcf-4069-8fea-35bc02407a2d",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RollRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
