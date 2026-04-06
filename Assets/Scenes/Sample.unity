@@ -450,6 +450,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 14082516}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &607502330 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8139690988762981221, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+  m_PrefabInstance: {fileID: 371865124747736916}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &644492383
 GameObject:
   m_ObjectHideFlags: 0
@@ -6179,13 +6184,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy orb
       objectReference: {fileID: 0}
+    - target: {fileID: 2950527457246279197, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+      propertyPath: speed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+      propertyPath: health
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+      propertyPath: lights
+      value: 
+      objectReference: {fileID: 607502330}
     - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
       propertyPath: explosion
       value: 
-      objectReference: {fileID: 183818, guid: 64d48cc8be380db4c9285fafe8c3c0a8, type: 3}
+      objectReference: {fileID: 100008, guid: 892b7546c4450e04ebe1c0fe562e15be, type: 3}
+    - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5928176062505231120, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
       propertyPath: explodeDistance
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8065468424469151847, guid: 83d76964bd1533f49b1f936b9f667964, type: 3}
       propertyPath: m_LengthScale
