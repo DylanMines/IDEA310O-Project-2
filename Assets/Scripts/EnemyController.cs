@@ -30,7 +30,7 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private float turnOffAxis;
 
-    private Material material;  
+    private Material material;
 
     private State currentState = State.IDLE;
 
@@ -40,6 +40,8 @@ public class EnemyController : MonoBehaviour
     private float hitFlashDuration = 1.0f;
     private float hitFlashDelta = 1.0f;
     private bool hitFlashDirection;
+
+    
 
     private GameObject Player;
 
@@ -72,20 +74,22 @@ public class EnemyController : MonoBehaviour
         {
             currentState = State.CHASE;
         }
+        movement.Normalize();
+        transform.position += movement * (speed / 50f) * Time.deltaTime;
 
         if (currentState == State.CHASE)
         {
-            movement.Normalize();
             ToggleThrusters();
-            transform.position += movement * (speed / 50f) * Time.deltaTime;
         }
 
         if (currentState == State.EXPLODE)
         {
-            Explode();
+            health = 0;
+            Invoke("Explode", 2.0f);
         }
 
-        hitFlashDuration = health / maxHealth * 3;
+        hitFlashDuration = (health + 5) / maxHealth * 3;
+
         if (hitFlashDirection == true)
         {
             hitFlashDelta += Time.deltaTime;
@@ -97,13 +101,14 @@ public class EnemyController : MonoBehaviour
 
         if (hitFlashDelta > hitFlashDuration)
         {
+            hitFlashDelta = hitFlashDuration;
             hitFlashDirection = false;
         }
         else if (hitFlashDelta < 0)
         {
             hitFlashDirection = true;
         }
-        float flashStrength = hitFlashDelta / hitFlashDuration;
+        float flashStrength = hitFlashDelta / hitFlashDuration % 1;
         Debug.Log(flashStrength);
         material.SetVector("_EmissionColor", Color.Lerp(Color.yellow, Color.black, flashStrength));
     }
@@ -130,5 +135,10 @@ public class EnemyController : MonoBehaviour
             exploded = true;
             Destroy(gameObject);
         }
+    }
+
+    void SetupUI()
+    {
+
     }
 }
