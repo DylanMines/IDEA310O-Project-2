@@ -1,14 +1,17 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public int buttonsPressed;
+    public int maxButtons;
     public int speed;
     public int dampening;
     public int sensitivity;
+    [SerializeField] private GameObject bullet;
 
     [SerializeField]
     private ParticleSystem effects;
@@ -16,10 +19,14 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image hotbar1;
     [SerializeField] private Image hotbar2;
+    [SerializeField] private TMP_Text score;
 
     [SerializeField] private MeshRenderer hotbar1Item;
     [SerializeField] private MeshRenderer hotbar2Item;
+    [SerializeField] private GameObject gun;
     private Vector3 momentum;
+
+    [SerializeField] private GameObject door;
 
     private InputAction lookAction;
     InputAction moveAction;
@@ -29,6 +36,8 @@ public class PlayerMove : MonoBehaviour
     InputAction hotbar2Action;
 
     private bool extinguisherEnabled = true;
+
+    private bool isShooting = false;
 
     private float xrot;
     private float yrot;
@@ -46,25 +55,64 @@ public class PlayerMove : MonoBehaviour
         SelectHotbarButton(1);
     }
 
+    void Shoot()
+    {
+        RaycastHit hit;
+        
+        GameObject newBullet =  Instantiate(bullet, gun.transform.position, transform.rotation);
+        Bullet b = newBullet.GetComponent<Bullet>();
+        
+        b.time = 1;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 4000.0f))
+        {
+            if (hit.collider.gameObject.tag == "Enemy")
+            {
+                Debug.Log("Damaging Enemy");
+                hit.collider.gameObject.GetComponent<EnemyController>().health -= 18;
+            }
+        }
+        b.target = transform.forward * 1000;
+    }
+
+    void Drag(ParticleSystem.EmissionModule emission)
+    {
+        emission.rateOverTime = 0f;
+        momentum -= momentum * (dampening / 50f) * Time.deltaTime;
+    }
+
+    void Move(ParticleSystem.EmissionModule emission)
+    {
+        emission.rateOverTime = 70f;
+        Vector3 moveDirection = transform.forward * -(speed / 50f);
+        momentum += moveDirection * Time.deltaTime;
+    }
+
     // Update is called once per frame
     void Update()
     {
         var emission = effects.emission;
 
-        if (moveAction.IsPressed() == true && extinguisherEnabled)
+        if (moveAction.IsPressed() == true)
         {
-            emission.rateOverTime = 70f;
-            //Debug.Log("moving");
-            Vector3 moveDirection = transform.forward * -(speed / 50f);
-            momentum += moveDirection * Time.deltaTime;
+            if (extinguisherEnabled == true)
+            {
+                Move(emission);
+            }
+            else if (isShooting == false)
+            {
+                isShooting = true;
+                Shoot();
+            }
         }
         else
         {
-            emission.rateOverTime = 0f;
-            momentum -= momentum * (dampening / 50f) * Time.deltaTime;
-            // effects.Pause();
+            Drag(emission);
+            if (isShooting == true)
+            {
+                isShooting = false;
+            }
         }
-
+        Debug.DrawRay(transform.position, transform.forward * 1000, Color.white, 1.0f);
         transform.position += momentum * Time.deltaTime;
 
         if (hotbar1Action.IsPressed() == true)
@@ -74,6 +122,17 @@ public class PlayerMove : MonoBehaviour
         else if (hotbar2Action.IsPressed() == true)
         {
             SelectHotbarButton(2);
+        }
+
+        
+        if (maxButtons == buttonsPressed)
+        {
+            door.GetComponent<Door>().unlocked = true;
+            score.text = "ALL BUTTONS ACTIVATED\nGET TO THE DOOR";
+        }
+        else
+        {
+            score.text = "Buttons Pressed: "+buttonsPressed+"/"+maxButtons;
         }
     }
 

@@ -26,7 +26,7 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private GameObject explosion;
     [SerializeField] private float maxHealth;
-    [SerializeField] private float health;
+    public float health;
 
     [SerializeField] private float turnOffAxis;
 
@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour
         {
             currentState = State.IDLE;
         }
-        else if (dist < explodeDistance)
+        else if (dist < explodeDistance || health < 5)
         {
             currentState = State.EXPLODE;
         }
@@ -109,7 +109,6 @@ public class EnemyController : MonoBehaviour
             hitFlashDirection = true;
         }
         float flashStrength = hitFlashDelta / hitFlashDuration % 1;
-        Debug.Log(flashStrength);
         material.SetVector("_EmissionColor", Color.Lerp(Color.yellow, Color.black, flashStrength));
     }
 

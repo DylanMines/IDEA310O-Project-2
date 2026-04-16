@@ -32,6 +32,10 @@ public class PPFXPhysicForce : MonoBehaviour {
 		
 		for(int i = 0; i < colliders.Length; i ++)
 		{
+			if (colliders[i] == null)
+			{
+				continue;
+			}
 			var _rb = colliders[i].GetComponent<Rigidbody>();
 			
 			if(_rb != null)
