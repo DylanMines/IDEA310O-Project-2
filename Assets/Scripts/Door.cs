@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
     public bool unlocked;
     public Animation anim;
+    public string nextScene;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,8 +22,14 @@ public class Door : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" && unlocked)
         {
+            GetComponent<AudioSource>().Play();
             anim.Play();
-            // wait, then load next scene
+            Invoke("LoadNextScene", 5.0f);
         }
+    }
+
+    void LoadNextScene()
+    {
+        SceneManager.LoadScene(nextScene);
     }
 }

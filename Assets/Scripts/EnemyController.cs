@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.SpeedTree.Importer;
 using UnityEngine;
 
 enum State
@@ -26,6 +25,7 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private GameObject explosion;
     [SerializeField] private float maxHealth;
+    [SerializeField] private AudioClip explosionSound;
     public float health;
 
     [SerializeField] private float turnOffAxis;
@@ -44,6 +44,10 @@ public class EnemyController : MonoBehaviour
     
 
     private GameObject Player;
+
+    [SerializeField] private AudioSource slowBeep;
+    [SerializeField] private AudioSource fastBeep;
+    [SerializeField] private AudioSource thrust;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -75,17 +79,35 @@ public class EnemyController : MonoBehaviour
             currentState = State.CHASE;
         }
         movement.Normalize();
-        transform.position += movement * (speed / 50f) * Time.deltaTime;
+       
 
         if (currentState == State.CHASE)
         {
+            transform.position += movement * (speed / 50f) * Time.deltaTime;
+            if (!slowBeep.isPlaying)
+            {
+                slowBeep.Play();
+            }
+            if (!thrust.isPlaying)
+            {
+                thrust.Play();
+            }
             ToggleThrusters();
         }
 
         if (currentState == State.EXPLODE)
         {
-            health = 0;
-            Invoke("Explode", 2.0f);
+            if (!exploded)
+            {
+                exploded = true;
+                health = 0;
+                slowBeep.Stop();
+                if (!fastBeep.isPlaying)
+                {
+                    fastBeep.Play();
+                }
+                Invoke("Explode", 2.0f);
+            }
         }
 
         hitFlashDuration = (health + 5) / maxHealth * 3;
@@ -128,16 +150,18 @@ public class EnemyController : MonoBehaviour
 
     void Explode()
     {
-        if (!exploded)
+        Instantiate(explosion, transform.position, transform.rotation);
+        thrust.PlayOneShot(explosionSound);
+        Collider[] colliders;
+        colliders = Physics.OverlapSphere(this.transform.position, 17);
+        foreach (Collider c in colliders)
         {
-            Instantiate(explosion, transform.position, transform.rotation);
-            exploded = true;
-            Destroy(gameObject);
+            if (c.gameObject.tag == "Player")
+            {
+                c.gameObject.SendMessage("Kill");
+                break;
+            }
         }
-    }
-
-    void SetupUI()
-    {
-
+        Destroy(gameObject);
     }
 }

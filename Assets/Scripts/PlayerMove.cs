@@ -5,58 +5,61 @@ using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public int buttonsPressed;
-    public int maxButtons;
+    private int maxButtons;
+    private int buttonsPressed;
+    private bool dead;
+    
+    [Header("Settings")]    
     public int speed;
     public int dampening;
     public int sensitivity;
+
+    [Header("References")]
     [SerializeField] private GameObject bullet;
 
-    [SerializeField]
-    private ParticleSystem effects;
-
+    [SerializeField] private ParticleSystem effects;
     [SerializeField] private Canvas canvas;
-    [SerializeField] private Image hotbar1;
-    [SerializeField] private Image hotbar2;
-    [SerializeField] private TMP_Text score;
-
     [SerializeField] private MeshRenderer hotbar1Item;
     [SerializeField] private MeshRenderer hotbar2Item;
     [SerializeField] private GameObject gun;
     private Vector3 momentum;
+    [SerializeField] private Door door;
 
-    [SerializeField] private GameObject door;
+    [SerializeField] private UI UIScript;
+    [SerializeField] private AudioSource extinguisherSound;
+    [SerializeField] private AudioSource laserSound;
+    [SerializeField] private GameObject DoorEnemies;
+    [SerializeField] private Rigidbody body;
 
     private InputAction lookAction;
+    InputAction menuAction;
     InputAction moveAction;
     InputAction rollLeft;
     InputAction rollRight;
     InputAction hotbar1Action;
     InputAction hotbar2Action;
-
     private bool extinguisherEnabled = true;
-
     private bool isShooting = false;
-
     private float xrot;
     private float yrot;
     private float zrot;
     void Start()
     {
-
         Cursor.lockState = CursorLockMode.Locked;
         moveAction = InputSystem.actions.FindAction("Move");
         lookAction = InputSystem.actions.FindAction("Look");
+        menuAction = InputSystem.actions.FindAction("OpenMenu");
+        maxButtons = GameObject.FindGameObjectsWithTag("Button").Length;
         rollLeft = InputSystem.actions.FindAction("RollLeft");
         rollRight = InputSystem.actions.FindAction("RollRight");
         hotbar1Action = InputSystem.actions.FindAction("Hotbar1");
         hotbar2Action = InputSystem.actions.FindAction("Hotbar2");
-        SelectHotbarButton(1);
+        SelectHotbar(1);
     }
 
     void Shoot()
     {
+        laserSound.PlayOneShot(laserSound.clip);
         RaycastHit hit;
         
         GameObject newBullet =  Instantiate(bullet, gun.transform.position, transform.rotation);
@@ -67,11 +70,10 @@ public class PlayerMove : MonoBehaviour
         {
             if (hit.collider.gameObject.tag == "Enemy")
             {
-                Debug.Log("Damaging Enemy");
                 hit.collider.gameObject.GetComponent<EnemyController>().health -= 18;
             }
         }
-        b.target = transform.forward * 1000;
+        b.target = transform.forward * 100000;
     }
 
     void Drag(ParticleSystem.EmissionModule emission)
@@ -84,7 +86,7 @@ public class PlayerMove : MonoBehaviour
     {
         emission.rateOverTime = 70f;
         Vector3 moveDirection = transform.forward * -(speed / 50f);
-        momentum += moveDirection * Time.deltaTime;
+        body.AddForce(moveDirection);
     }
 
     // Update is called once per frame
@@ -92,10 +94,26 @@ public class PlayerMove : MonoBehaviour
     {
         var emission = effects.emission;
 
+        if (menuAction.WasPressedThisFrame() == true)
+        {
+            if (UIScript.menuOpen)
+            {
+                UIScript.SendMessage("HideMenu");
+            }
+            else
+            {
+                UIScript.SendMessage("ShowMenu");
+            }
+        }
+
         if (moveAction.IsPressed() == true)
         {
             if (extinguisherEnabled == true)
             {
+                if (!extinguisherSound.isPlaying)
+                {
+                    extinguisherSound.Play();
+                }
                 Move(emission);
             }
             else if (isShooting == false)
@@ -106,6 +124,7 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
+            extinguisherSound.Stop();
             Drag(emission);
             if (isShooting == true)
             {
@@ -117,23 +136,12 @@ public class PlayerMove : MonoBehaviour
 
         if (hotbar1Action.IsPressed() == true)
         {
-            SelectHotbarButton(1);
+            SelectHotbar(1);
         }
         else if (hotbar2Action.IsPressed() == true)
         {
-            SelectHotbarButton(2);
-        }
-
-        
-        if (maxButtons == buttonsPressed)
-        {
-            door.GetComponent<Door>().unlocked = true;
-            score.text = "ALL BUTTONS ACTIVATED\nGET TO THE DOOR";
-        }
-        else
-        {
-            score.text = "Buttons Pressed: "+buttonsPressed+"/"+maxButtons;
-        }
+            SelectHotbar(2);
+        } 
     }
 
     private void LateUpdate()
@@ -154,33 +162,47 @@ public class PlayerMove : MonoBehaviour
         transform.Rotate(rotateVector * Time.deltaTime * sensitivity);
 
         // method 2
-        /*yrot += -lookValue.y;
-        xrot += lookValue.x;
-        zrot += rollValue;
+        // yrot += -lookValue.y;
+        // xrot += lookValue.x;
+        // zrot += rollValue;
 
-        transform.rotation = Quaternion.Euler(new Vector3(yrot, xrot, zrot) * sensitivity/50);*/
-
+        // transform.rotation = Quaternion.Euler(new Vector3(yrot, xrot, zrot) * sensitivity/50);
     }
 
-    private void SelectHotbarButton(short button)
+    void SelectHotbar(short option)
     {
-        // Vector4 selectedColor = new Vector4(95 / 255, 180 / 255, 255 / 255, 1);
-        if (button == 1)
+        if (option == 1)
         {
-            hotbar1.color = Color.cyan;
-            hotbar2.color = Color.white;
+            extinguisherEnabled = true;
             hotbar1Item.enabled = true;
             hotbar2Item.enabled = false;
-            extinguisherEnabled = true;
         }
         else
         {
-            hotbar1.color = Color.white;
-            hotbar2.color = Color.cyan;
+            extinguisherEnabled = false;
             hotbar1Item.enabled = false;
             hotbar2Item.enabled = true;
-            extinguisherEnabled = false;
+        }
+        UIScript.BroadcastMessage("SelectHotbarButton", option);
+    }
 
+    void ButtonPressed()
+    {
+        if (dead) {return;}
+        buttonsPressed += 1;
+        UIScript.BroadcastMessage("UpdateScore", buttonsPressed);
+        if (buttonsPressed == maxButtons)
+        {
+            GameObject.Find("/Music").SendMessage("BattleMusic");
+            door.unlocked = true;
+            DoorEnemies.SetActive(true);
         }
     }
+
+    void Kill()
+    {
+        UIScript.BroadcastMessage("ShowDeath");
+        Cursor.lockState = CursorLockMode.None;
+    }
+    
 }

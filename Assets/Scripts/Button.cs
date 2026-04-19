@@ -19,13 +19,12 @@ public class Button : MonoBehaviour
         if (other.gameObject.tag == "Player" && pressed == false)
         {
             pressed = true;
-            other.gameObject.GetComponent<PlayerMove>().buttonsPressed += 1;
+            other.gameObject.SendMessage("ButtonPressed");
             m_Materials[2] = completedMat;
             List<Material> mats = new List<Material>(m_Materials);
             render.SetMaterials(mats);
 
-            Debug.Log("Button Pressed");
-            // wait, then load next scene
+            GetComponent<AudioSource>().Play();
         }
     }
 }
